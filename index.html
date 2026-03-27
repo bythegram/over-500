@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="description" content="MLB Stats Dashboard">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <link rel="stylesheet" href="style.css">
+  <link rel="shortcut icon" href="fav.ico">
+  <link rel="apple-touch-icon" href="fav.ico">
+  <link rel="apple-touch-startup-image" href="fav.ico">
+  <title>MLB Stats</title>
+</head>
+<body>
+  <div class="headbar" id="headbar"></div>
+  <div class="winper">
+    <div class="vert_wrapper">
+      <div class="vert_cell">
+        <div id="win-pct"></div>
+        <div class="moredetails" id="more-details"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/gh/alexgibson/shake.js@master/shake.js"></script>
+  <script>
+    (function () {
+      'use strict';
+
+      var DEFAULT_TEAM = 'Toronto Blue Jays';
+      var REFRESH_INTERVAL = 600000; // 10 minutes
+
+      var MLB_TEAMS = [
+        'Arizona Diamondbacks', 'Atlanta Braves', 'Baltimore Orioles',
+        'Boston Red Sox', 'Chicago Cubs', 'Chicago White Sox',
+        'Cincinnati Reds', 'Cleveland Guardians', 'Colorado Rockies',
+        'Detroit Tigers', 'Houston Astros', 'Kansas City Royals',
+        'Los Angeles Angels', 'Los Angeles Dodgers', 'Miami Marlins',
+        'Milwaukee Brewers', 'Minnesota Twins', 'New York Mets',
+        'New York Yankees', 'Oakland Athletics', 'Philadelphia Phillies',
+        'Pittsburgh Pirates', 'San Diego Padres', 'San Francisco Giants',
+        'Seattle Mariners', 'St. Louis Cardinals', 'Tampa Bay Rays',
+        'Texas Rangers', 'Toronto Blue Jays', 'Washington Nationals'
+      ];
+
+      // ----------------------------------------------------------------
+      // Stubbed API functions — endpoints to be replaced in a future task
+      // ----------------------------------------------------------------
+
+      /**
+       * Fetch standings for the given season and date.
+       * TODO: Replace with new endpoint.
+       * Original: http://mlb.mlb.com/lookup/json/named.standings_schedule_date.bam
+       */
+      function fetchStandings(year, date) {
+        var url = 'https://mlb.mlb.com/lookup/json/named.standings_schedule_date.bam'
+          + '?season=' + year
+          + '&schedule_game_date.game_date=%27' + date + '%27'
+          + '&sit_code=%27h0%27'
+          + '&league_id=103&league_id=104'
+          + '&all_star_sw=%27N%27'
+          + '&version=2';
+        return fetch(url).then(function (res) { return res.json(); });
+      }
+
+      /**
+       * Fetch team branding/style data for the given file code.
+       * TODO: Replace with new endpoint.
+       * Original: http://mlb.com/shared/properties/style/{fileCode}.json
+       */
+      function fetchTeamStyle(fileCode) {
+        var url = 'https://mlb.com/shared/properties/style/' + fileCode + '.json';
+        return fetch(url).then(function (res) { return res.json(); });
+      }
+
+      // ----------------------------------------------------------------
+      // Utilities
+      // ----------------------------------------------------------------
+
+      function getTeamParam() {
+        var params = new URLSearchParams(window.location.search);
+        return params.get('team') || DEFAULT_TEAM;
+      }
+
+      function getYesterdayString() {
+        var d = new Date();
+        d.setDate(d.getDate() - 1);
+        var mm = String(d.getMonth() + 1).padStart(2, '0');
+        var dd = String(d.getDate()).padStart(2, '0');
+        return d.getFullYear() + '/' + mm + '/' + dd;
+      }
+
+      function shuffleArray(arr) {
+        var a = arr.slice();
+        for (var i = a.length - 1; i > 0; i--) {
+          var j = Math.floor(Math.random() * (i + 1));
+          var tmp = a[i];
+          a[i] = a[j];
+          a[j] = tmp;
+        }
+        return a;
+      }
+
+      // ----------------------------------------------------------------
+      // Rendering
+      // ----------------------------------------------------------------
+
+      function applyTeamTheme(primaryColor, secondaryColor, textColor, teamName, logoUrl) {
+        var themeStyle = document.getElementById('team-theme');
+        if (!themeStyle) {
+          themeStyle = document.createElement('style');
+          themeStyle.id = 'team-theme';
+          document.head.appendChild(themeStyle);
+        }
+        themeStyle.textContent = [
+          '.headbar, .moredetails {',
+          '  color: ' + textColor + ';',
+          '  background-color: ' + primaryColor + ';',
+          '  border-color: ' + secondaryColor + ';',
+          '}',
+          '.winper { color: ' + primaryColor + '; }',
+          'body { font-family: "MLB ' + teamName + '", "mlb_primary", sans-serif; }'
+        ].join('\n');
+
+        if (logoUrl) {
+          document.body.style.backgroundImage = 'url(' + logoUrl + ')';
+          document.body.style.backgroundRepeat = 'no-repeat';
+          document.body.style.backgroundPosition = '50%';
+        }
+      }
+
+      function renderTeam(team) {
+        var year = new Date().getFullYear();
+        document.title = team.team_full + ' Stats';
+        document.getElementById('headbar').textContent = team.team_full + ' ' + year;
+
+        document.getElementById('win-pct').innerHTML =
+          team.pct.replace('.', '<span class="dot">.</span>');
+
+        document.getElementById('more-details').innerHTML =
+          'W<span class="dot">:</span> ' + team.w +
+          ' | L<span class="dot">:</span> ' + team.l +
+          ' | Runs<span class="dot">:</span> ' + team.runs;
+      }
+
+      // ----------------------------------------------------------------
+      // Navigation
+      // ----------------------------------------------------------------
+
+      function loadTeam() {
+        var teams = shuffleArray(MLB_TEAMS);
+        var team = teams[0];
+        window.location.href = window.location.pathname + '?team=' + encodeURIComponent(team);
+      }
+
+      // ----------------------------------------------------------------
+      // App initialisation
+      // ----------------------------------------------------------------
+
+      function init() {
+        var teamName = getTeamParam();
+        var year = new Date().getFullYear();
+        var date = getYesterdayString();
+
+        fetchStandings(year, date)
+          .then(function (data) {
+            var scheduleDate = data
+              && data.standings_schedule_date
+              && data.standings_schedule_date.standings_all_date_rptr;
+            var leagues = scheduleDate && scheduleDate.standings_all_date;
+
+            if (!Array.isArray(leagues)) {
+              console.warn('Unexpected standings response shape');
+              return;
+            }
+
+            var team = null;
+
+            leagues.forEach(function (le) {
+              var rows = le.queryResults && le.queryResults.row;
+              // API may return a single object instead of an array
+              if (rows && !Array.isArray(rows)) {
+                rows = [rows];
+              }
+              if (!rows) { return; }
+              rows.forEach(function (row) {
+                if (row.team_full === teamName) {
+                  team = row;
+                }
+              });
+            });
+
+            if (!team) {
+              console.warn('Team not found:', teamName);
+              return;
+            }
+
+            renderTeam(team);
+
+            return fetchTeamStyle(team.file_code).then(function (styleData) {
+              var wiredLogo = styleData && styleData.wired_logo;
+              var darkTheme = styleData && styleData.style && styleData.style.dark_theme;
+
+              var logoUrl = null;
+              if (wiredLogo && wiredLogo.url && wiredLogo.image) {
+                var baseUrl = new URL(wiredLogo.url);
+                logoUrl = baseUrl.origin + wiredLogo.image;
+              }
+
+              if (darkTheme) {
+                applyTeamTheme(
+                  darkTheme.secondary_border,
+                  darkTheme.secondary_background,
+                  darkTheme.text,
+                  team.team_full,
+                  logoUrl
+                );
+              }
+            });
+          })
+          .catch(function (err) {
+            console.error('Failed to load team data:', err);
+          });
+      }
+
+      // Auto-refresh
+      setInterval(init, REFRESH_INTERVAL);
+
+      // Shake to load a random team
+      if (typeof Shake !== 'undefined') {
+        var shakeEvent = new Shake({ threshold: 15 });
+        shakeEvent.start();
+        window.addEventListener('shake', loadTeam, false);
+      }
+
+      // Click body to load a random team
+      document.body.addEventListener('click', loadTeam);
+
+      // Boot
+      init();
+    }());
+  </script>
+</body>
+</html>
