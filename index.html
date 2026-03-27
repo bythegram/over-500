@@ -8,6 +8,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <link rel="stylesheet" href="fonts/stylesheet.css">
   <link rel="stylesheet" href="style.css">
   <link rel="shortcut icon" href="fav.ico">
   <link rel="apple-touch-icon" href="fav.ico">
@@ -20,10 +21,10 @@
     <div class="vert_wrapper">
       <div class="vert_cell">
         <div id="win-pct"></div>
-        <div class="moredetails" id="more-details"></div>
       </div>
     </div>
   </div>
+  <div class="moredetails" id="more-details"></div>
 
   <script>
     (function () {
@@ -66,6 +67,32 @@
         'Texas Rangers': 140,
         'Toronto Blue Jays': 141,
         'Washington Nationals': 120
+      };
+
+      // Maps full team name → per-team inline display font-family (from fonts/stylesheet.css).
+      // Teams without a dedicated font file are omitted (falls back to mlb_primary).
+      var MLB_TEAM_FONTS = {
+        'Arizona Diamondbacks': 'MLB Arizona Diamondbacks',
+        'Baltimore Orioles':    'MLB Baltimore Orioles',
+        'Chicago Cubs':         'MLB Chicago Cubs',
+        'Chicago White Sox':    'MLB Chicago White Sox',
+        'Cincinnati Reds':      'MLB Cincinnati Reds',
+        'Colorado Rockies':     'MLB Colorado Rockies',
+        'Kansas City Royals':   'MLB Kansas City Royals',
+        'Los Angeles Angels':   'MLB Los Angeles Angels',
+        'Los Angeles Dodgers':  'MLB Los Angeles Dodgers',
+        'Miami Marlins':        'MLB Miami Marlins',
+        'Milwaukee Brewers':    'MLB Milwaukee Brewers',
+        'Minnesota Twins':      'MLB Minnesota Twins',
+        'New York Mets':        'MLB New York Mets',
+        'Philadelphia Phillies':'MLB Philadelphia Phillies',
+        'Pittsburgh Pirates':   'MLB Pittsburgh Pirates',
+        'San Diego Padres':     'MLB San Diego Padres',
+        'Seattle Mariners':     'MLB Seattle Mariners',
+        'St. Louis Cardinals':  'MLB St. Louis Cardinals',
+        'Texas Rangers':        'MLB Texas Rangers',
+        'Toronto Blue Jays':    'MLB Toronto Blue Jays',
+        'Washington Nationals': 'MLB Washington Nationals'
       };
 
       // ----------------------------------------------------------------
@@ -146,13 +173,16 @@
         document.title = teamName + ' Stats';
         document.getElementById('headbar').textContent = teamName + ' ' + year;
 
-        document.getElementById('win-pct').innerHTML =
+        var winPctEl = document.getElementById('win-pct');
+        var teamFont = MLB_TEAM_FONTS[teamName];
+        winPctEl.style.fontFamily = teamFont ? '"' + teamFont + '", sans-serif' : '"mlb_primary", sans-serif';
+        winPctEl.innerHTML =
           team.leagueRecord.pct.replace(/\./g, '<span class="dot">.</span>');
 
         document.getElementById('more-details').innerHTML =
-          'W<span class="dot">:</span> ' + team.leagueRecord.wins +
-          ' | L<span class="dot">:</span> ' + team.leagueRecord.losses +
-          ' | Runs<span class="dot">:</span> ' + (team.runsScored != null ? team.runsScored : '-');
+          'W<span class="dot">:</span>\u00a0' + team.leagueRecord.wins +
+          '\u00a0\u00a0\u00a0L<span class="dot">:</span>\u00a0' + team.leagueRecord.losses +
+          '\u00a0\u00a0\u00a0RUNS<span class="dot">:</span>\u00a0' + (team.runsScored != null ? team.runsScored : '-');
       }
 
       // ----------------------------------------------------------------
