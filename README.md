@@ -8,7 +8,7 @@ A lightweight, static fan-made dashboard that displays live Major League Basebal
 
 ## Features
 
-- **Live standings data** — win percentage, wins, losses, and runs scored, fetched directly from the official MLB Stats API
+- **Latest complete standings** — win percentage, wins, losses, and runs scored, fetched from the official MLB Stats API using the most recent completed day's data
 - **Team branding** — dynamic team colours loaded from MLB's brand-colour service so every team looks authentic
 - **Team-specific fonts** — 21 clubs have dedicated typefaces; all others fall back to the primary MLB display font
 - **Random team loader** — click the team name in the header to jump to a randomly selected club
@@ -44,7 +44,7 @@ All colours update instantly to match the selected team's official palette.
 |-------|-----------|
 | Markup | HTML5 |
 | Styling | CSS3 (Flexbox, CSS custom properties, `clamp()` fluid sizing) |
-| Logic | Vanilla JavaScript (ES5-compatible, no frameworks or build tools required) |
+| Logic | Vanilla JavaScript (ES5-style syntax; relies on modern browser APIs — `fetch`, `Promise`, `URLSearchParams`, `padStart` — no frameworks or build tools required; polyfills needed for older browsers) |
 | Fonts | Custom per-team MLB typefaces + Benton Sans Condensed Medium |
 | Data | [MLB Stats API](https://statsapi.mlb.com/api/v1/standings) |
 | Branding | [MLB Brand Colours API](https://brand-colors.mlbstatic.com) |

@@ -12,7 +12,7 @@
 |---------|-----------|
 | Markup | Plain HTML5 — a single `index.html` file |
 | Styling | Vanilla CSS3 — a single `style.css` file (Flexbox, CSS custom properties, `clamp()`) |
-| Logic | Vanilla JavaScript (ES5-compatible) — a single `app.js` file wrapped in an IIFE |
+| Logic | Vanilla JavaScript (ES5-style syntax; relies on modern browser APIs: `fetch`, `Promise`, `URLSearchParams`, `padStart`) — a single `app.js` file wrapped in an IIFE |
 | Fonts | Custom MLB typefaces declared in `fonts/stylesheet.css` |
 | Data | MLB Stats API (`statsapi.mlb.com`) |
 | Branding | MLB Brand Colours API (`brand-colors.mlbstatic.com`) |
@@ -75,7 +75,7 @@ Fallback values (`#134a8e` / `#fff`) are applied until the brand CSS loads.
 
 ## Coding Conventions
 
-- **ES5 only** — no `let`, `const`, arrow functions, template literals, or other ES6+ syntax
+- **ES5 syntax only** — no `let`, `const`, arrow functions, template literals, or other ES6+ syntax; the code does rely on modern browser APIs (`fetch`, `Promise`, `URLSearchParams`, `String.prototype.padStart`) so polyfills are required for older browsers
 - **Single IIFE** — all code lives inside `(function () { 'use strict'; … }());`
 - **No external dependencies at runtime** — do not add npm packages that are loaded in the browser
 - **Minimal DOM manipulation** — use `createElement` / `appendChild` / `removeChild` rather than `innerHTML` to avoid XSS risks
