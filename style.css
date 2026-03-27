@@ -11,10 +11,24 @@
   --color-bg: #fff;
   --color-text: #000;
 
-  /* Team brand colours (resolved by the dynamically loaded brand CSS;
-     fallbacks apply until that stylesheet is available) */
-  --color-brand-bg: var(--mlb-1-brand-background-main, #134a8e);
-  --color-brand-text: var(--mlb-1-brand-text-primary, #fff);
+  /* Team brand colours — all resolved from the dynamically loaded brand CSS.
+     Fallback values apply until the brand stylesheet is available.
+     Each variable wraps its corresponding --mlb-1-brand-* counterpart so
+     that overriding a single :root variable is all that is needed to retheme. */
+  --color-brand-bg:             var(--mlb-1-brand-background-main,    #134a8e);
+  --color-brand-bg-support:     var(--mlb-1-brand-background-support, #0d3b7a);
+  --color-brand-bg-inverse:     var(--mlb-1-brand-background-inverse, #ffffff);
+  --color-brand-text:           var(--mlb-1-brand-text-primary,       #ffffff);
+  --color-brand-text-secondary: var(--mlb-1-brand-text-secondary,     rgba(255, 255, 255, 0.8));
+  --color-brand-text-inverse:   var(--mlb-1-brand-text-inverse,       #134a8e);
+  --color-brand-icon:           var(--mlb-1-brand-icon-primary,       #ffffff);
+  --color-brand-icon-inverse:   var(--mlb-1-brand-icon-inverse,       #134a8e);
+  --color-brand-border:         var(--mlb-1-brand-border-decorative,  #0d3b7a);
+  --color-brand-border-contrast: var(--mlb-1-brand-border-contrast,    #4c5a83);
+  --color-brand-border-inverse: var(--mlb-1-brand-border-inverse,     #ffffff);
+  --color-brand-decorative-1:   var(--mlb-1-brand-decorative-color-1, #134a8e);
+  --color-brand-decorative-2:   var(--mlb-1-brand-decorative-color-2, #8fbce6);
+  --color-brand-surface:        var(--mlb-1-brand-surface,            #134a8e);
 
   /* Header bar typography */
   --headbar-font-size: 0.85rem;

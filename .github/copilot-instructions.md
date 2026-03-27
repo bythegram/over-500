@@ -75,9 +75,21 @@ All colours, font attributes, and sizing values are declared as CSS custom prope
 - `--color-bg` — page background (`#fff`)
 - `--color-text` — default text colour (`#000`)
 
-**Team brand colours** (resolved by the dynamically loaded brand CSS; fallbacks apply until that stylesheet is available)
+**Team brand colours** (resolved by the dynamically loaded brand CSS; fallbacks apply until that stylesheet is available; each variable wraps the corresponding `--mlb-1-brand-*` counterpart)
 - `--color-brand-bg` — wraps `--mlb-1-brand-background-main` (fallback `#134a8e`)
-- `--color-brand-text` — wraps `--mlb-1-brand-text-primary` (fallback `#fff`)
+- `--color-brand-bg-support` — wraps `--mlb-1-brand-background-support` (fallback `#0d3b7a`)
+- `--color-brand-bg-inverse` — wraps `--mlb-1-brand-background-inverse` (fallback `#ffffff`)
+- `--color-brand-text` — wraps `--mlb-1-brand-text-primary` (fallback `#ffffff`)
+- `--color-brand-text-secondary` — wraps `--mlb-1-brand-text-secondary` (fallback `rgba(255,255,255,0.8)`)
+- `--color-brand-text-inverse` — wraps `--mlb-1-brand-text-inverse` (fallback `#134a8e`)
+- `--color-brand-icon` — wraps `--mlb-1-brand-icon-primary` (fallback `#ffffff`)
+- `--color-brand-icon-inverse` — wraps `--mlb-1-brand-icon-inverse` (fallback `#134a8e`)
+- `--color-brand-border` — wraps `--mlb-1-brand-border-decorative` (fallback `#0d3b7a`)
+- `--color-brand-border-contrast` — wraps `--mlb-1-brand-border-contrast` (fallback `#4c5a83`)
+- `--color-brand-border-inverse` — wraps `--mlb-1-brand-border-inverse` (fallback `#ffffff`)
+- `--color-brand-decorative-1` — wraps `--mlb-1-brand-decorative-color-1` (fallback `#134a8e`)
+- `--color-brand-decorative-2` — wraps `--mlb-1-brand-decorative-color-2` (fallback `#8fbce6`)
+- `--color-brand-surface` — wraps `--mlb-1-brand-surface` (fallback `#134a8e`)
 
 **Header bar typography**
 - `--headbar-font-size` — header text size (`0.85rem`)

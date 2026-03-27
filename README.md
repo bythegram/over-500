@@ -144,8 +144,20 @@ All colours and font attributes are declared as CSS custom properties in `:root`
 | `--font-weight-medium` | `500` | Shared medium font weight (header and footer bars) |
 | `--color-bg` | `#fff` | Page background colour |
 | `--color-text` | `#000` | Default text colour (body and win-percentage figure) |
-| `--color-brand-bg` | `var(--mlb-1-brand-background-main, #134a8e)` | Header and footer background; resolved from the team's brand CSS |
-| `--color-brand-text` | `var(--mlb-1-brand-text-primary, #fff)` | Header and footer text colour; resolved from the team's brand CSS |
+| `--color-brand-bg` | `var(--mlb-1-brand-background-main, #134a8e)` | Primary brand background (header and footer) |
+| `--color-brand-bg-support` | `var(--mlb-1-brand-background-support, #0d3b7a)` | Supporting/secondary brand background |
+| `--color-brand-bg-inverse` | `var(--mlb-1-brand-background-inverse, #ffffff)` | Inverse brand background |
+| `--color-brand-text` | `var(--mlb-1-brand-text-primary, #ffffff)` | Primary brand text colour (header and footer) |
+| `--color-brand-text-secondary` | `var(--mlb-1-brand-text-secondary, rgba(255,255,255,0.8))` | Secondary brand text colour |
+| `--color-brand-text-inverse` | `var(--mlb-1-brand-text-inverse, #134a8e)` | Inverse brand text colour |
+| `--color-brand-icon` | `var(--mlb-1-brand-icon-primary, #ffffff)` | Primary brand icon colour |
+| `--color-brand-icon-inverse` | `var(--mlb-1-brand-icon-inverse, #134a8e)` | Inverse brand icon colour |
+| `--color-brand-border` | `var(--mlb-1-brand-border-decorative, #0d3b7a)` | Decorative brand border colour |
+| `--color-brand-border-contrast` | `var(--mlb-1-brand-border-contrast, #4c5a83)` | High-contrast brand border colour |
+| `--color-brand-border-inverse` | `var(--mlb-1-brand-border-inverse, #ffffff)` | Inverse brand border colour |
+| `--color-brand-decorative-1` | `var(--mlb-1-brand-decorative-color-1, #134a8e)` | First decorative brand colour |
+| `--color-brand-decorative-2` | `var(--mlb-1-brand-decorative-color-2, #8fbce6)` | Second decorative brand colour |
+| `--color-brand-surface` | `var(--mlb-1-brand-surface, #134a8e)` | Brand surface colour |
 | `--headbar-font-size` | `0.85rem` | Header bar font size |
 | `--headbar-letter-spacing` | `0.05em` | Header bar letter spacing |
 | `--winpct-font-size` | `clamp(4rem, 20vw, 12rem)` | Fluid font size for the win-percentage figure |
