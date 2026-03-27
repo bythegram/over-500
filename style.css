@@ -17,9 +17,8 @@ body {
 }
 
 body {
-  background-color: #1a1a1a;
-  background-size: cover;
-  color: #fff;
+  background-color: var(--mlb-1-brand-background-support, #1a1a1a);
+  color: var(--mlb-1-brand-text-primary, #fff);
 }
 
 /* ==========================================================================
@@ -35,7 +34,9 @@ body {
   font-weight: bold;
   letter-spacing: 0.05em;
   text-transform: uppercase;
-  border-bottom: 2px solid currentColor;
+  color: var(--mlb-1-brand-text-primary, #fff);
+  background-color: var(--mlb-1-brand-background-main, #222);
+  border-bottom: 2px solid var(--mlb-1-brand-border-decorative, transparent);
 }
 
 /* ==========================================================================
@@ -50,6 +51,7 @@ body {
   font-size: clamp(4rem, 20vw, 12rem);
   font-weight: bold;
   text-align: center;
+  color: var(--mlb-1-brand-background-inverse, #fff);
 }
 
 .vert_wrapper {
@@ -81,5 +83,7 @@ body {
   font-weight: 600;
   letter-spacing: 0.08em;
   border-radius: 4px;
-  border: 2px solid transparent;
+  color: var(--mlb-1-brand-text-primary, #fff);
+  background-color: var(--mlb-1-brand-background-main, #222);
+  border: 2px solid var(--mlb-1-brand-border-contrast, transparent);
 }

@@ -63,14 +63,28 @@
         return fetch(url).then(function (res) { return res.json(); });
       }
 
+      // ----------------------------------------------------------------
+      // Branding
+      // ----------------------------------------------------------------
+
       /**
-       * Fetch team branding/style data for the given team ID.
-       * TODO: Replace with new team-branding endpoint once available.
-       *       Expected shape: { wired_logo: { url, image }, style: { dark_theme: { secondary_border, secondary_background, text } } }
+       * Load the team brand CSS from brand-colors.mlbstatic.com and activate
+       * the brand class on <body> so all CSS variables resolve.
+       * CSS file scope: :root .brand--team-{id} { --mlb-1-brand-* }
        */
-      function fetchTeamStyle(teamId) {
-        var url = 'https://mlb.com/shared/properties/style/' + teamId + '.json';
-        return fetch(url).then(function (res) { return res.json(); });
+      function applyTeamBranding(teamId) {
+        var link = document.getElementById('team-brand-css');
+        if (!link) {
+          link = document.createElement('link');
+          link.id = 'team-brand-css';
+          link.rel = 'stylesheet';
+          document.head.appendChild(link);
+        }
+        link.href = 'https://brand-colors.mlbstatic.com/v1/team-' + teamId + '.css';
+        // SRI hashes are not applied here because the brand CSS files are
+        // per-team, updated frequently, and selected dynamically at runtime.
+        link.crossOrigin = 'anonymous';
+        document.body.className = 'brand--team-' + teamId;
       }
 
       // ----------------------------------------------------------------
@@ -104,30 +118,6 @@
       // ----------------------------------------------------------------
       // Rendering
       // ----------------------------------------------------------------
-
-      function applyTeamTheme(primaryColor, secondaryColor, textColor, teamName, logoUrl) {
-        var themeStyle = document.getElementById('team-theme');
-        if (!themeStyle) {
-          themeStyle = document.createElement('style');
-          themeStyle.id = 'team-theme';
-          document.head.appendChild(themeStyle);
-        }
-        themeStyle.textContent = [
-          '.headbar, .moredetails {',
-          '  color: ' + textColor + ';',
-          '  background-color: ' + primaryColor + ';',
-          '  border-color: ' + secondaryColor + ';',
-          '}',
-          '.winper { color: ' + primaryColor + '; }',
-          'body { font-family: "MLB ' + teamName + '", "mlb_primary", sans-serif; }'
-        ].join('\n');
-
-        if (logoUrl) {
-          document.body.style.backgroundImage = 'url(' + logoUrl + ')';
-          document.body.style.backgroundRepeat = 'no-repeat';
-          document.body.style.backgroundPosition = '50%';
-        }
-      }
 
       function renderTeam(team) {
         var year = new Date().getFullYear();
@@ -189,35 +179,17 @@
             }
 
             renderTeam(team);
-
-            return fetchTeamStyle(team.team.id).then(function (styleData) {
-              var wiredLogo = styleData && styleData.wired_logo;
-              var darkTheme = styleData && styleData.style && styleData.style.dark_theme;
-
-              var logoUrl = null;
-              if (wiredLogo && wiredLogo.url && wiredLogo.image) {
-                var baseUrl = new URL(wiredLogo.url);
-                logoUrl = baseUrl.origin + wiredLogo.image;
-              }
-
-              if (darkTheme) {
-                applyTeamTheme(
-                  darkTheme.secondary_border,
-                  darkTheme.secondary_background,
-                  darkTheme.text,
-                  team.team.name,
-                  logoUrl
-                );
-              }
-            });
+            applyTeamBranding(team.team.id);
           })
           .catch(function (err) {
             console.error('Failed to load team data:', err);
+          })
+          .finally(function () {
+            // Schedule the next refresh only after the current one completes,
+            // preventing overlapping requests on slow connections.
+            setTimeout(init, REFRESH_INTERVAL);
           });
       }
-
-      // Auto-refresh
-      setInterval(init, REFRESH_INTERVAL);
 
       // Shake to load a random team
       if (typeof Shake !== 'undefined') {
