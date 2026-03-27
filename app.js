@@ -142,7 +142,7 @@
   function renderTeam(teamName, team) {
     var year = new Date().getFullYear();
     document.title = teamName + ' Stats';
-    document.getElementById('headbar').textContent = teamName + ' ' + year;
+    document.getElementById('team-btn').textContent = teamName + ' ' + year;
 
     var winPctEl = document.getElementById('win-pct');
     var teamFont = MLB_TEAM_FONTS[teamName];
@@ -220,8 +220,8 @@
       });
   }
 
-  // Click body to load a random team
-  document.body.addEventListener('click', loadTeam);
+  // Clicking the team name button in the headbar loads a random team
+  document.getElementById('team-btn').addEventListener('click', loadTeam);
 
   // Boot
   init();
