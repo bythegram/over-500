@@ -80,7 +80,15 @@
       + '&season=' + year
       + '&date=' + date
       + '&hydrate=division';
-    return fetch(url).then(function (res) { return res.json(); });
+    return fetch(url).then(function (res) {
+      if (!res.ok) {
+        var error = new Error('Failed to fetch standings: ' + res.status + ' ' + res.statusText);
+        error.status = res.status;
+        error.statusText = res.statusText;
+        throw error;
+      }
+      return res.json();
+    });
   }
 
   // ----------------------------------------------------------------
@@ -104,7 +112,28 @@
     // SRI hashes are not applied here because the brand CSS files are
     // per-team, updated frequently, and selected dynamically at runtime.
     link.crossOrigin = 'anonymous';
-    document.body.className = 'brand--team-' + teamId;
+    var body = document.body;
+    var brandClass = 'brand--team-' + teamId;
+
+    if (body.classList && typeof body.classList.length === 'number') {
+      for (var i = body.classList.length - 1; i >= 0; i--) {
+        var cls = body.classList[i];
+        if (/^brand--team-/.test(cls)) {
+          body.classList.remove(cls);
+        }
+      }
+      body.classList.add(brandClass);
+    } else {
+      var current = (body.className || '').split(/\s+/);
+      var kept = [];
+      for (var j = 0; j < current.length; j++) {
+        if (current[j] && !/^brand--team-/.test(current[j])) {
+          kept.push(current[j]);
+        }
+      }
+      kept.push(brandClass);
+      body.className = kept.join(' ').trim();
+    }
   }
 
   // ----------------------------------------------------------------
@@ -147,13 +176,53 @@
     var winPctEl = document.getElementById('win-pct');
     var teamFont = MLB_TEAM_FONTS[teamName];
     winPctEl.style.fontFamily = teamFont ? '"' + teamFont + '", sans-serif' : '"mlb_primary", sans-serif';
-    winPctEl.innerHTML =
-      team.leagueRecord.pct.replace(/\./g, '<span class="dot">.</span>');
+    // Safely render win percentage with decorative dot spans.
+    while (winPctEl.firstChild) {
+      winPctEl.removeChild(winPctEl.firstChild);
+    }
+    var pct = team.leagueRecord && team.leagueRecord.pct ? String(team.leagueRecord.pct) : '';
+    for (var pi = 0; pi < pct.length; pi++) {
+      var ch = pct.charAt(pi);
+      if (ch === '.') {
+        var dotSpan = document.createElement('span');
+        dotSpan.className = 'dot';
+        dotSpan.textContent = '.';
+        winPctEl.appendChild(dotSpan);
+      } else {
+        winPctEl.appendChild(document.createTextNode(ch));
+      }
+    }
 
-    document.getElementById('more-details').innerHTML =
-      'W<span class="dot">:</span>\u00a0' + team.leagueRecord.wins +
-      '\u00a0\u00a0\u00a0L<span class="dot">:</span>\u00a0' + team.leagueRecord.losses +
-      '\u00a0\u00a0\u00a0RUNS<span class="dot">:</span>\u00a0' + (team.runsScored != null ? team.runsScored : '-');
+    // Safely render more details with decorative colon dots.
+    var moreDetailsEl = document.getElementById('more-details');
+    while (moreDetailsEl.firstChild) {
+      moreDetailsEl.removeChild(moreDetailsEl.firstChild);
+    }
+
+    var wins = team.leagueRecord && team.leagueRecord.wins != null ? team.leagueRecord.wins : '-';
+    var losses = team.leagueRecord && team.leagueRecord.losses != null ? team.leagueRecord.losses : '-';
+    var runs = team.runsScored != null ? team.runsScored : '-';
+
+    var wColon = document.createElement('span');
+    wColon.className = 'dot';
+    wColon.textContent = ':';
+    moreDetailsEl.appendChild(document.createTextNode('W'));
+    moreDetailsEl.appendChild(wColon);
+    moreDetailsEl.appendChild(document.createTextNode('\u00a0' + wins));
+
+    var lColon = document.createElement('span');
+    lColon.className = 'dot';
+    lColon.textContent = ':';
+    moreDetailsEl.appendChild(document.createTextNode('\u00a0\u00a0\u00a0L'));
+    moreDetailsEl.appendChild(lColon);
+    moreDetailsEl.appendChild(document.createTextNode('\u00a0' + losses));
+
+    var runsColon = document.createElement('span');
+    runsColon.className = 'dot';
+    runsColon.textContent = ':';
+    moreDetailsEl.appendChild(document.createTextNode('\u00a0\u00a0\u00a0RUNS'));
+    moreDetailsEl.appendChild(runsColon);
+    moreDetailsEl.appendChild(document.createTextNode('\u00a0' + runs));
   }
 
   // ----------------------------------------------------------------
