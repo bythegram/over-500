@@ -47,32 +47,29 @@
       ];
 
       // ----------------------------------------------------------------
-      // Stubbed API functions — endpoints to be replaced in a future task
+      // API functions
       // ----------------------------------------------------------------
 
       /**
-       * Fetch standings for the given season and date.
-       * TODO: Replace with new endpoint.
-       * Original: http://mlb.mlb.com/lookup/json/named.standings_schedule_date.bam
+       * Fetch standings for both leagues for the given season and date.
+       * Endpoint: https://statsapi.mlb.com/api/v1/standings
        */
       function fetchStandings(year, date) {
-        var url = 'https://mlb.mlb.com/lookup/json/named.standings_schedule_date.bam'
-          + '?season=' + year
-          + '&schedule_game_date.game_date=%27' + date + '%27'
-          + '&sit_code=%27h0%27'
-          + '&league_id=103&league_id=104'
-          + '&all_star_sw=%27N%27'
-          + '&version=2';
+        var url = 'https://statsapi.mlb.com/api/v1/standings'
+          + '?leagueId=103,104'
+          + '&season=' + year
+          + '&date=' + date
+          + '&hydrate=division';
         return fetch(url).then(function (res) { return res.json(); });
       }
 
       /**
-       * Fetch team branding/style data for the given file code.
-       * TODO: Replace with new endpoint.
-       * Original: http://mlb.com/shared/properties/style/{fileCode}.json
+       * Fetch team branding/style data for the given team ID.
+       * TODO: Replace with new team-branding endpoint once available.
+       *       Expected shape: { wired_logo: { url, image }, style: { dark_theme: { secondary_border, secondary_background, text } } }
        */
-      function fetchTeamStyle(fileCode) {
-        var url = 'https://mlb.com/shared/properties/style/' + fileCode + '.json';
+      function fetchTeamStyle(teamId) {
+        var url = 'https://mlb.com/shared/properties/style/' + teamId + '.json';
         return fetch(url).then(function (res) { return res.json(); });
       }
 
@@ -90,7 +87,7 @@
         d.setDate(d.getDate() - 1);
         var mm = String(d.getMonth() + 1).padStart(2, '0');
         var dd = String(d.getDate()).padStart(2, '0');
-        return d.getFullYear() + '/' + mm + '/' + dd;
+        return d.getFullYear() + '-' + mm + '-' + dd;
       }
 
       function shuffleArray(arr) {
@@ -134,16 +131,16 @@
 
       function renderTeam(team) {
         var year = new Date().getFullYear();
-        document.title = team.team_full + ' Stats';
-        document.getElementById('headbar').textContent = team.team_full + ' ' + year;
+        document.title = team.team.name + ' Stats';
+        document.getElementById('headbar').textContent = team.team.name + ' ' + year;
 
         document.getElementById('win-pct').innerHTML =
-          team.pct.replace('.', '<span class="dot">.</span>');
+          team.leagueRecord.pct.replace(/\./g, '<span class="dot">.</span>');
 
         document.getElementById('more-details').innerHTML =
-          'W<span class="dot">:</span> ' + team.w +
-          ' | L<span class="dot">:</span> ' + team.l +
-          ' | Runs<span class="dot">:</span> ' + team.runs;
+          'W<span class="dot">:</span> ' + team.leagueRecord.wins +
+          ' | L<span class="dot">:</span> ' + team.leagueRecord.losses +
+          ' | Runs<span class="dot">:</span> ' + team.runsScored;
       }
 
       // ----------------------------------------------------------------
@@ -167,28 +164,21 @@
 
         fetchStandings(year, date)
           .then(function (data) {
-            var scheduleDate = data
-              && data.standings_schedule_date
-              && data.standings_schedule_date.standings_all_date_rptr;
-            var leagues = scheduleDate && scheduleDate.standings_all_date;
+            var records = data && data.records;
 
-            if (!Array.isArray(leagues)) {
+            if (!Array.isArray(records)) {
               console.warn('Unexpected standings response shape');
               return;
             }
 
             var team = null;
 
-            leagues.forEach(function (le) {
-              var rows = le.queryResults && le.queryResults.row;
-              // API may return a single object instead of an array
-              if (rows && !Array.isArray(rows)) {
-                rows = [rows];
-              }
-              if (!rows) { return; }
-              rows.forEach(function (row) {
-                if (row.team_full === teamName) {
-                  team = row;
+            records.forEach(function (record) {
+              var teamRecords = record.teamRecords;
+              if (!Array.isArray(teamRecords)) { return; }
+              teamRecords.forEach(function (teamRecord) {
+                if (teamRecord.team && teamRecord.team.name === teamName) {
+                  team = teamRecord;
                 }
               });
             });
@@ -200,7 +190,7 @@
 
             renderTeam(team);
 
-            return fetchTeamStyle(team.file_code).then(function (styleData) {
+            return fetchTeamStyle(team.team.id).then(function (styleData) {
               var wiredLogo = styleData && styleData.wired_logo;
               var darkTheme = styleData && styleData.style && styleData.style.dark_theme;
 
@@ -215,7 +205,7 @@
                   darkTheme.secondary_border,
                   darkTheme.secondary_background,
                   darkTheme.text,
-                  team.team_full,
+                  team.team.name,
                   logoUrl
                 );
               }
