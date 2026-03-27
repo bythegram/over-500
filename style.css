@@ -17,10 +17,14 @@ body {
 }
 
 body {
-  display: flex;
-  flex-direction: column;
   background-color: #fff;
   color: #000;
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 /* ==========================================================================
