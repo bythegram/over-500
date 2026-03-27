@@ -65,17 +65,17 @@ Single IIFE in ES5. Key sections (in order):
 
 ### `style.css`
 
-All colours, font attributes, and sizing values are declared as CSS custom properties in `:root` at the top of the file. Override any variable to theme the dashboard without touching layout rules.
+Base colours, font attributes, and sizing values are declared as CSS custom properties on `:root` at the top of the file. Team-specific brand wrapper variables (`--color-brand-*`) are declared on `body` so they can resolve the dynamically loaded `--mlb-1-brand-*` values. Override the `:root` variables for global theming, and override the `body`-scoped `--color-brand-*` variables if you need to bypass the MLB brand colours.
 
-**Typography**
+**Typography** (`:root`)
 - `--font-primary` — base font stack (`"mlb_primary", sans-serif`)
 - `--font-weight-medium` — shared medium weight (`500`)
 
-**Base palette**
+**Base palette** (`:root`)
 - `--color-bg` — page background (`#fff`)
 - `--color-text` — default text colour (`#000`)
 
-**Team brand colours** (resolved by the dynamically loaded brand CSS; fallbacks apply until that stylesheet is available; each variable wraps the corresponding `--mlb-1-brand-*` counterpart)
+**Team brand colours** (`body` wrappers resolved by the dynamically loaded brand CSS; fallbacks apply until that stylesheet is available; each wrapper variable maps to the corresponding `--mlb-1-brand-*` counterpart)
 - `--color-brand-bg` — wraps `--mlb-1-brand-background-main` (fallback `#134a8e`)
 - `--color-brand-bg-support` — wraps `--mlb-1-brand-background-support` (fallback `#0d3b7a`)
 - `--color-brand-bg-inverse` — wraps `--mlb-1-brand-background-inverse` (fallback `#ffffff`)
@@ -114,7 +114,7 @@ All colours, font attributes, and sizing values are declared as CSS custom prope
 - **No external dependencies at runtime** — do not add npm packages that are loaded in the browser
 - **Minimal DOM manipulation** — use `createElement` / `appendChild` / `removeChild` rather than `innerHTML` to avoid XSS risks
 - **No framework** — no React, Vue, Angular, jQuery, etc.
-- **CSS custom properties** — all colours and font attributes are declared as variables in `:root` inside `style.css`; use `var(--variable-name)` for all team-specific and themeable values
+- **CSS custom properties** — declare global colours and font attributes as custom properties in `:root` inside `style.css`, but define brand wrapper variables (`--color-brand-*`) on `body` so they can reference the dynamically loaded `--mlb-1-brand-*` properties; use `var(--variable-name)` for all team-specific and themeable values
 - **Error handling** — `console.warn` for expected-but-missing data; `console.error` for network/unexpected failures
 - **Comments** — use JSDoc-style block comments for functions; inline `//` comments for non-obvious logic
 

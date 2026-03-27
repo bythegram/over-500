@@ -134,7 +134,7 @@ All 30 current MLB franchises are supported:
 
 ## Theming
 
-All colours and font attributes are declared as CSS custom properties in `:root` at the top of `style.css`. Override any variable — either in a separate stylesheet or inside a `<style>` tag — to customise the look without touching layout rules.
+Global layout and typography values are declared as CSS custom properties on `:root` at the top of `style.css`. Team brand wrapper variables (the `--color-brand-*` values that resolve `--mlb-1-brand-*` from the CDN) are declared on `body` via the `.brand--team-{id}` class, so overrides for those must also target `body` (or a specific `.brand--team-{id}`), not `:root`. Override any variable — either in a separate stylesheet or inside a `<style>` tag — to customise the look without touching layout rules.
 
 ### Available variables
 
@@ -169,11 +169,19 @@ All colours and font attributes are declared as CSS custom properties in `:root`
 
 ```css
 /* custom-theme.css */
+
+/* Global/layout overrides go on :root */
 :root {
   --color-bg: #0a0a0a;
   --color-text: #f5f5f5;
   --font-weight-medium: 700;
   --dot-opacity: 0.25;
+}
+
+/* Brand colour overrides must target body, not :root */
+body {
+  --color-brand-bg: #1a1a2e;
+  --color-brand-text: #e0e0e0;
 }
 ```
 
