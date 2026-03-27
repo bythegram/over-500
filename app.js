@@ -115,7 +115,7 @@
     var body = document.body;
     var brandClass = 'brand--team-' + teamId;
 
-    if (body.classList && typeof body.classList.length === 'number') {
+    if (body.classList) {
       for (var i = body.classList.length - 1; i >= 0; i--) {
         var cls = body.classList[i];
         if (/^brand--team-/.test(cls)) {
@@ -132,7 +132,7 @@
         }
       }
       kept.push(brandClass);
-      body.className = kept.join(' ').trim();
+      body.className = kept.join(' ');
     }
   }
 
@@ -175,12 +175,13 @@
 
     var winPctEl = document.getElementById('win-pct');
     var teamFont = MLB_TEAM_FONTS[teamName];
+    var record = team.leagueRecord || {};
     winPctEl.style.fontFamily = teamFont ? '"' + teamFont + '", sans-serif' : '"mlb_primary", sans-serif';
     // Safely render win percentage with decorative dot spans.
     while (winPctEl.firstChild) {
       winPctEl.removeChild(winPctEl.firstChild);
     }
-    var pct = team.leagueRecord && team.leagueRecord.pct ? String(team.leagueRecord.pct) : '';
+    var pct = record.pct ? String(record.pct) : '';
     for (var pi = 0; pi < pct.length; pi++) {
       var ch = pct.charAt(pi);
       if (ch === '.') {
@@ -199,8 +200,8 @@
       moreDetailsEl.removeChild(moreDetailsEl.firstChild);
     }
 
-    var wins = team.leagueRecord && team.leagueRecord.wins != null ? team.leagueRecord.wins : '-';
-    var losses = team.leagueRecord && team.leagueRecord.losses != null ? team.leagueRecord.losses : '-';
+    var wins = record.wins != null ? record.wins : '-';
+    var losses = record.losses != null ? record.losses : '-';
     var runs = team.runsScored != null ? team.runsScored : '-';
 
     var wColon = document.createElement('span');
