@@ -43,7 +43,7 @@ All colours update instantly to match the selected team's official palette.
 | Layer | Technology |
 |-------|-----------|
 | Markup | HTML5 |
-| Styling | CSS3 (Flexbox, CSS custom properties, `clamp()` fluid sizing) |
+| Styling | CSS3 (Flexbox, CSS custom properties for all colours and font attributes, `clamp()` fluid sizing) |
 | Logic | Vanilla JavaScript (ES5-style syntax; relies on modern browser APIs — `fetch`, `Promise`, `URLSearchParams`, `padStart` — no frameworks or build tools required; polyfills needed for older browsers) |
 | Fonts | Custom per-team MLB typefaces + Benton Sans Condensed Medium |
 | Data | [MLB Stats API](https://statsapi.mlb.com/api/v1/standings) |
@@ -132,13 +132,48 @@ All 30 current MLB franchises are supported:
 
 ---
 
+## Theming
+
+All colours and font attributes are declared as CSS custom properties in `:root` at the top of `style.css`. Override any variable — either in a separate stylesheet or inside a `<style>` tag — to customise the look without touching layout rules.
+
+### Available variables
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `--font-primary` | `"mlb_primary", sans-serif` | Base font stack used throughout the page |
+| `--font-weight-medium` | `500` | Shared medium font weight (header and footer bars) |
+| `--color-bg` | `#fff` | Page background colour |
+| `--color-text` | `#000` | Default text colour (body and win-percentage figure) |
+| `--color-brand-bg` | `var(--mlb-1-brand-background-main, #134a8e)` | Header and footer background; resolved from the team's brand CSS |
+| `--color-brand-text` | `var(--mlb-1-brand-text-primary, #fff)` | Header and footer text colour; resolved from the team's brand CSS |
+| `--headbar-font-size` | `0.85rem` | Header bar font size |
+| `--headbar-letter-spacing` | `0.05em` | Header bar letter spacing |
+| `--winpct-font-size` | `clamp(4rem, 20vw, 12rem)` | Fluid font size for the win-percentage figure |
+| `--dot-opacity` | `0.4` | Opacity of the decorative `.` and `:` characters |
+| `--moredetails-font-size` | `clamp(0.85rem, 3vw, 1.1rem)` | Footer bar font size |
+| `--moredetails-letter-spacing` | `0.08em` | Footer bar letter spacing |
+
+### Example override
+
+```css
+/* custom-theme.css */
+:root {
+  --color-bg: #0a0a0a;
+  --color-text: #f5f5f5;
+  --font-weight-medium: 700;
+  --dot-opacity: 0.25;
+}
+```
+
+---
+
 ## Project Structure
 
 ```
 mlbstats/
 ├── index.html          # Single-page HTML shell
 ├── app.js              # All application logic (data fetching, rendering, routing)
-├── style.css           # Layout and theming (CSS custom properties for team colours)
+├── style.css           # Layout and theming (CSS custom properties for all colours and font attributes)
 ├── fonts/
 │   ├── stylesheet.css  # @font-face declarations for all MLB fonts
 │   ├── BentonSans-*    # Primary MLB display typeface
