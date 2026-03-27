@@ -77,6 +77,7 @@ main {
 /* Styled decimal dot inside win percentage */
 .dot {
   opacity: 0.4;
+  font-family: 'mlb_primary';
 }
 
 /* ==========================================================================
