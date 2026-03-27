@@ -1,4 +1,32 @@
 /* ==========================================================================
+   CSS custom properties — edit these to theme the dashboard
+   ========================================================================== */
+
+:root {
+  /* Typography */
+  --font-primary: "mlb_primary", sans-serif;
+  --font-weight-medium: 500;
+
+  /* Base palette */
+  --color-bg: #fff;
+  --color-text: #000;
+
+  /* Header bar typography */
+  --headbar-font-size: 0.85rem;
+  --headbar-letter-spacing: 0.05em;
+
+  /* Win-percentage display */
+  --winpct-font-size: clamp(4rem, 20vw, 12rem);
+
+  /* Decorative dot */
+  --dot-opacity: 0.4;
+
+  /* Details / footer bar typography */
+  --moredetails-font-size: clamp(0.85rem, 3vw, 1.1rem);
+  --moredetails-letter-spacing: 0.08em;
+}
+
+/* ==========================================================================
    Base reset
    ========================================================================== */
 
@@ -13,12 +41,33 @@ body {
   margin: 0;
   padding: 0;
   height: 100%;
-  font-family: "mlb_primary", sans-serif;
+  font-family: var(--font-primary);
 }
 
 body {
-  background-color: #fff;
-  color: #000;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+
+  /* Team brand colours — resolved from the dynamically loaded brand CSS.
+     Fallback values apply until the brand stylesheet is available.
+     The brand CSS is scoped to :root .brand--team-{id}, which matches this
+     element once applyTeamBranding() adds the brand class to <body>.
+     Declaring these here (not at :root) lets the --mlb-1-brand-* variables
+     resolve correctly, because CSS custom properties only inherit downward. */
+  --color-brand-bg:             var(--mlb-1-brand-background-main,    #134a8e);
+  --color-brand-bg-support:     var(--mlb-1-brand-background-support, #0d3b7a);
+  --color-brand-bg-inverse:     var(--mlb-1-brand-background-inverse, #ffffff);
+  --color-brand-text:           var(--mlb-1-brand-text-primary,       #ffffff);
+  --color-brand-text-secondary: var(--mlb-1-brand-text-secondary,     rgba(255, 255, 255, 0.8));
+  --color-brand-text-inverse:   var(--mlb-1-brand-text-inverse,       #134a8e);
+  --color-brand-icon:           var(--mlb-1-brand-icon-primary,       #ffffff);
+  --color-brand-icon-inverse:   var(--mlb-1-brand-icon-inverse,       #134a8e);
+  --color-brand-border:         var(--mlb-1-brand-border-decorative,  #0d3b7a);
+  --color-brand-border-contrast: var(--mlb-1-brand-border-contrast,   #4c5a83);
+  --color-brand-border-inverse: var(--mlb-1-brand-border-inverse,     #ffffff);
+  --color-brand-decorative-1:   var(--mlb-1-brand-decorative-color-1, #134a8e);
+  --color-brand-decorative-2:   var(--mlb-1-brand-decorative-color-2, #8fbce6);
+  --color-brand-surface:        var(--mlb-1-brand-surface,            #134a8e);
 }
 
 main {
@@ -37,12 +86,12 @@ main {
   align-items: center;
   justify-content: center;
   padding: 10px 16px;
-  font-size: 0.85rem;
-  font-weight: 500;
-  letter-spacing: 0.05em;
+  font-size: var(--headbar-font-size);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--headbar-letter-spacing);
   text-transform: uppercase;
-  color: var(--mlb-1-brand-text-primary, #fff);
-  background-color: var(--mlb-1-brand-background-main, #134a8e);
+  color: var(--color-brand-text);
+  background-color: var(--color-brand-bg);
 }
 
 #team-btn {
@@ -69,15 +118,15 @@ main {
 }
 
 #win-pct {
-  font-size: clamp(4rem, 20vw, 12rem);
+  font-size: var(--winpct-font-size);
   line-height: 1;
-  color: #000;
+  color: var(--color-text);
 }
 
 /* Styled decimal dot inside win percentage */
 .dot {
-  opacity: 0.4;
-  font-family: 'mlb_primary';
+  opacity: var(--dot-opacity);
+  font-family: var(--font-primary);
 }
 
 /* ==========================================================================
@@ -90,10 +139,10 @@ main {
   align-items: center;
   justify-content: center;
   padding: 12px 16px;
-  font-size: clamp(0.85rem, 3vw, 1.1rem);
-  font-weight: 500;
-  letter-spacing: 0.08em;
+  font-size: var(--moredetails-font-size);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--moredetails-letter-spacing);
   text-transform: uppercase;
-  color: var(--mlb-1-brand-text-primary, #fff);
-  background-color: var(--mlb-1-brand-background-main, #134a8e);
+  color: var(--color-brand-text);
+  background-color: var(--color-brand-bg);
 }

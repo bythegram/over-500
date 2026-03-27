@@ -65,11 +65,45 @@ Single IIFE in ES5. Key sections (in order):
 
 ### `style.css`
 
-CSS custom properties used for team theming (populated by the brand-colours CDN):
-- `--mlb-1-brand-background-main` — header and footer background colour
-- `--mlb-1-brand-text-primary` — header and footer text colour
+Base colours, font attributes, and sizing values are declared as CSS custom properties on `:root` at the top of the file. Team-specific brand wrapper variables (`--color-brand-*`) are declared on `body` so they can resolve the dynamically loaded `--mlb-1-brand-*` values. Override the `:root` variables for global theming, and override the `body`-scoped `--color-brand-*` variables if you need to bypass the MLB brand colours.
 
-Fallback values (`#134a8e` / `#fff`) are applied until the brand CSS loads.
+**Typography** (`:root`)
+- `--font-primary` — base font stack (`"mlb_primary", sans-serif`)
+- `--font-weight-medium` — shared medium weight (`500`)
+
+**Base palette** (`:root`)
+- `--color-bg` — page background (`#fff`)
+- `--color-text` — default text colour (`#000`)
+
+**Team brand colours** (`body` wrappers resolved by the dynamically loaded brand CSS; fallbacks apply until that stylesheet is available; each wrapper variable maps to the corresponding `--mlb-1-brand-*` counterpart)
+- `--color-brand-bg` — wraps `--mlb-1-brand-background-main` (fallback `#134a8e`)
+- `--color-brand-bg-support` — wraps `--mlb-1-brand-background-support` (fallback `#0d3b7a`)
+- `--color-brand-bg-inverse` — wraps `--mlb-1-brand-background-inverse` (fallback `#ffffff`)
+- `--color-brand-text` — wraps `--mlb-1-brand-text-primary` (fallback `#ffffff`)
+- `--color-brand-text-secondary` — wraps `--mlb-1-brand-text-secondary` (fallback `rgba(255,255,255,0.8)`)
+- `--color-brand-text-inverse` — wraps `--mlb-1-brand-text-inverse` (fallback `#134a8e`)
+- `--color-brand-icon` — wraps `--mlb-1-brand-icon-primary` (fallback `#ffffff`)
+- `--color-brand-icon-inverse` — wraps `--mlb-1-brand-icon-inverse` (fallback `#134a8e`)
+- `--color-brand-border` — wraps `--mlb-1-brand-border-decorative` (fallback `#0d3b7a`)
+- `--color-brand-border-contrast` — wraps `--mlb-1-brand-border-contrast` (fallback `#4c5a83`)
+- `--color-brand-border-inverse` — wraps `--mlb-1-brand-border-inverse` (fallback `#ffffff`)
+- `--color-brand-decorative-1` — wraps `--mlb-1-brand-decorative-color-1` (fallback `#134a8e`)
+- `--color-brand-decorative-2` — wraps `--mlb-1-brand-decorative-color-2` (fallback `#8fbce6`)
+- `--color-brand-surface` — wraps `--mlb-1-brand-surface` (fallback `#134a8e`)
+
+**Header bar typography**
+- `--headbar-font-size` — header text size (`0.85rem`)
+- `--headbar-letter-spacing` — header letter spacing (`0.05em`)
+
+**Win-percentage display**
+- `--winpct-font-size` — fluid win-pct size (`clamp(4rem, 20vw, 12rem)`)
+
+**Decorative dot**
+- `--dot-opacity` — opacity of the `.` and `:` decorative characters (`0.4`)
+
+**Details / footer bar typography**
+- `--moredetails-font-size` — footer text size (`clamp(0.85rem, 3vw, 1.1rem)`)
+- `--moredetails-letter-spacing` — footer letter spacing (`0.08em`)
 
 ---
 
@@ -80,7 +114,7 @@ Fallback values (`#134a8e` / `#fff`) are applied until the brand CSS loads.
 - **No external dependencies at runtime** — do not add npm packages that are loaded in the browser
 - **Minimal DOM manipulation** — use `createElement` / `appendChild` / `removeChild` rather than `innerHTML` to avoid XSS risks
 - **No framework** — no React, Vue, Angular, jQuery, etc.
-- **CSS custom properties** — use `var(--mlb-1-brand-*, fallback)` for all team-specific colours
+- **CSS custom properties** — declare global colours and font attributes as custom properties in `:root` inside `style.css`, but define brand wrapper variables (`--color-brand-*`) on `body` so they can reference the dynamically loaded `--mlb-1-brand-*` properties; use `var(--variable-name)` for all team-specific and themeable values
 - **Error handling** — `console.warn` for expected-but-missing data; `console.error` for network/unexpected failures
 - **Comments** — use JSDoc-style block comments for functions; inline `//` comments for non-obvious logic
 
