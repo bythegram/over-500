@@ -12,17 +12,17 @@
   --color-text: #000;
 
   /* Header bar typography */
-  --headbar-font-size: 0.85rem;
+  --headbar-font-size: clamp(0.85rem, 3vw, 3rem);
   --headbar-letter-spacing: 0.05em;
 
   /* Win-percentage display */
-  --winpct-font-size: clamp(4rem, 20vw, 12rem);
+  --winpct-font-size: clamp(4rem, 30vw, 20rem);
 
   /* Decorative dot */
   --dot-opacity: 0.4;
 
   /* Details / footer bar typography */
-  --moredetails-font-size: clamp(0.85rem, 3vw, 1.1rem);
+  --moredetails-font-size: clamp(0.85rem, 3vw, 3rem);
   --moredetails-letter-spacing: 0.08em;
 }
 
