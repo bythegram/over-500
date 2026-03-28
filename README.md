@@ -82,8 +82,8 @@ npm start
 Alternatively, serve with any static HTTP server — for example:
 
 ```bash
-npx serve .
-python3 -m http.server 3000
+npx serve public
+python3 -m http.server 3000 --directory public
 ```
 
 > **Note:** The app fetches data from external APIs. Open it over HTTP (not `file://`) to avoid CORS restrictions.
@@ -193,13 +193,23 @@ body {
 
 ```
 over-500/
-├── index.html          # Single-page HTML shell
-├── app.js              # All application logic (data fetching, rendering, routing)
-├── style.css           # Layout and theming (CSS custom properties for all colours and font attributes)
-├── fonts/
-│   ├── stylesheet.css  # @font-face declarations for all MLB fonts
-│   ├── BentonSans-*    # Primary MLB display typeface
-│   └── MLB*.{eot,ttf,woff}  # Per-team decorative fonts (21 teams)
+├── public/
+│   ├── index.html          # Single-page HTML shell
+│   ├── app.js              # All application logic (data fetching, rendering, routing)
+│   ├── style.css           # Layout and theming (CSS custom properties for all colours and font attributes)
+│   ├── manifest.json       # PWA web app manifest
+│   ├── sw.js               # Service worker (offline caching)
+│   ├── fonts/
+│   │   ├── stylesheet.css  # @font-face declarations for all MLB fonts
+│   │   ├── BentonSans-*    # Primary MLB display typeface
+│   │   └── MLB*.{eot,ttf,woff}  # Per-team decorative fonts (21 teams)
+│   └── icons/
+│       ├── favicon.ico
+│       ├── apple-touch-icon.png
+│       ├── icon-192.png
+│       ├── icon-192-maskable.png
+│       ├── icon-512.png
+│       └── icon-512-maskable.png
 ├── package.json        # npm metadata and dev-server script
 └── README.md           # This file
 ```
