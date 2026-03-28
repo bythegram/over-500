@@ -1,8 +1,8 @@
-# GitHub Copilot Instructions — MLB Stats Dashboard
+# GitHub Copilot Instructions — Over 500
 
 ## Project Overview
 
-**MLB Stats Dashboard** (`mlbstats`) is a lightweight, static, single-page fan website that displays live Major League Baseball standings and team statistics. It is a fan project and is **not affiliated with, endorsed by, or sponsored by Major League Baseball or any MLB club**.
+**Over 500** (`over-500`) is a lightweight, static, single-page fan website that displays live Major League Baseball standings and team statistics. It is a fan project and is **not affiliated with, endorsed by, or sponsored by Major League Baseball or any MLB club**.
 
 ---
 
@@ -25,7 +25,7 @@ There is **no framework, no transpiler, no bundler, and no build step**. The ent
 ## Repository Layout
 
 ```
-mlbstats/
+over-500/
 ├── index.html          # HTML shell; three layout zones: headbar / winper / moredetails
 ├── app.js              # All JS logic (IIFE, ES5)
 ├── style.css           # Global styles and CSS custom-property theming
