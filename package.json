@@ -1,6 +1,6 @@
 {
-  "name": "mlbstats",
-  "description": "MLB Stats Dashboard — static site",
+  "name": "over-500",
+  "description": "Over 500 — static site",
   "version": "1.0.0",
   "private": true,
   "scripts": {

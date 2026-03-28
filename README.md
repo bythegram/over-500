@@ -1,4 +1,4 @@
-# MLB Stats Dashboard
+# Over 500
 
 A lightweight, static fan-made dashboard that displays live Major League Baseball team standings and statistics, styled with authentic MLB team colours and fonts.
 
@@ -20,7 +20,9 @@ A lightweight, static fan-made dashboard that displays live Major League Basebal
 
 ## Live Demo
 
-Serve the repo locally (see [Getting Started](#getting-started)) and open `http://localhost:3000` in your browser.
+**[https://bythegram.github.io/over-500/](https://bythegram.github.io/over-500/)**
+
+Or serve the repo locally (see [Getting Started](#getting-started)) and open `http://localhost:3000` in your browser.
 
 ---
 
@@ -63,8 +65,8 @@ All colours update instantly to match the selected team's official palette.
 
 ```bash
 # Clone the repository
-git clone https://github.com/bythegram/mlbstats.git
-cd mlbstats
+git clone https://github.com/bythegram/over-500.git
+cd over-500
 
 # Install the optional dev server
 npm install
@@ -190,7 +192,7 @@ body {
 ## Project Structure
 
 ```
-mlbstats/
+over-500/
 ├── index.html          # Single-page HTML shell
 ├── app.js              # All application logic (data fetching, rendering, routing)
 ├── style.css           # Layout and theming (CSS custom properties for all colours and font attributes)
