@@ -29,12 +29,6 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
-      - name: Prepare static site
-        run: |
-          mkdir -p public
-          cp index.html app.js style.css public/
-          cp -R fonts public/fonts
-
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
