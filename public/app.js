@@ -67,6 +67,15 @@
   };
 
   // ----------------------------------------------------------------
+  // Drawer state
+  // ----------------------------------------------------------------
+
+  var drawerState = {
+    isOpen: false,
+    currentTeam: null
+  };
+
+  // ----------------------------------------------------------------
   // API functions
   // ----------------------------------------------------------------
 
@@ -164,6 +173,76 @@
     return a;
   }
 
+  /** Format a record object (with .wins / .losses) as "W-L", or '-' if unavailable. */
+  function formatRecord(recordObj) {
+    return (recordObj && recordObj.wins != null) ? recordObj.wins + '-' + recordObj.losses : '-';
+  }
+
+  // ----------------------------------------------------------------
+  // Drawer functions
+  // ----------------------------------------------------------------
+
+  function openDrawer() {
+    var drawer = document.getElementById('stats-drawer');
+    var backdrop = document.getElementById('drawer-backdrop');
+
+    drawer.classList.add('open');
+    backdrop.classList.add('open');
+    drawerState.isOpen = true;
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeDrawer() {
+    var drawer = document.getElementById('stats-drawer');
+    var backdrop = document.getElementById('drawer-backdrop');
+
+    drawer.classList.remove('open');
+    backdrop.classList.remove('open');
+    drawerState.isOpen = false;
+    document.body.style.overflow = '';
+  }
+
+  /**
+   * Populate the stats table inside the drawer with data from the team record.
+   * @param {Object} team - teamRecord object from the standings API response
+   */
+  function populateStatsTable(team) {
+    var tbody = document.getElementById('stats-table-body');
+    while (tbody.firstChild) {
+      tbody.removeChild(tbody.firstChild);
+    }
+
+    var record = team.leagueRecord || {};
+    var stats = [
+      { label: 'Wins',           value: record.wins   != null ? record.wins   : '-' },
+      { label: 'Losses',         value: record.losses != null ? record.losses : '-' },
+      { label: 'Win %',          value: record.pct    ? record.pct             : '-' },
+      { label: 'Runs Scored',    value: team.runsScored      != null ? team.runsScored      : '-' },
+      { label: 'Runs Allowed',   value: team.runsAllowed     != null ? team.runsAllowed     : '-' },
+      { label: 'Run Differential', value: team.runDifferential != null ? team.runDifferential : '-' },
+      { label: 'Home Record',    value: formatRecord(team.home) },
+      { label: 'Away Record',    value: formatRecord(team.away) },
+      { label: 'Last 10',        value: formatRecord(team.lastTen) },
+      { label: 'Current Streak', value: (team.streak  && team.streak.streakCode ? team.streak.streakCode : '-') },
+      { label: 'Division Rank',  value: team.divisionRank != null ? team.divisionRank : '-' },
+      { label: 'League Rank',    value: team.leagueRank   != null ? team.leagueRank   : '-' }
+    ];
+
+    stats.forEach(function (stat) {
+      var tr = document.createElement('tr');
+
+      var tdLabel = document.createElement('td');
+      tdLabel.textContent = stat.label;
+      tr.appendChild(tdLabel);
+
+      var tdValue = document.createElement('td');
+      tdValue.textContent = stat.value;
+      tr.appendChild(tdValue);
+
+      tbody.appendChild(tr);
+    });
+  }
+
   // ----------------------------------------------------------------
   // Rendering
   // ----------------------------------------------------------------
@@ -224,6 +303,10 @@
     moreDetailsEl.appendChild(document.createTextNode('\u00a0\u00a0\u00a0RUNS'));
     moreDetailsEl.appendChild(runsColon);
     moreDetailsEl.appendChild(document.createTextNode('\u00a0' + runs));
+
+    // Store current team data and pre-populate the stats drawer.
+    drawerState.currentTeam = team;
+    populateStatsTable(team);
   }
 
   // ----------------------------------------------------------------
@@ -234,6 +317,39 @@
     var teams = shuffleArray(Object.keys(MLB_TEAM_IDS));
     var team = teams[0];
     window.location.href = window.location.pathname + '?team=' + encodeURIComponent(team);
+  }
+
+  // ----------------------------------------------------------------
+  // Event listeners
+  // ----------------------------------------------------------------
+
+  function setupEventListeners() {
+    // Team button click — load a random team
+    document.getElementById('team-btn').addEventListener('click', loadTeam);
+
+    // Footer bar click — open stats drawer
+    document.getElementById('more-details').addEventListener('click', openDrawer);
+
+    // Footer bar keyboard activation (Enter / Space)
+    document.getElementById('more-details').addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        openDrawer();
+      }
+    });
+
+    // Close button inside drawer
+    document.getElementById('drawer-close').addEventListener('click', closeDrawer);
+
+    // Backdrop click — close drawer
+    document.getElementById('drawer-backdrop').addEventListener('click', closeDrawer);
+
+    // ESC key — close drawer
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && drawerState.isOpen) {
+        closeDrawer();
+      }
+    });
   }
 
   // ----------------------------------------------------------------
@@ -290,9 +406,7 @@
       });
   }
 
-  // Clicking the team name button in the headbar loads a random team
-  document.getElementById('team-btn').addEventListener('click', loadTeam);
-
   // Boot
+  setupEventListeners();
   init();
 }());
