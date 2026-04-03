@@ -182,24 +182,128 @@
   // Drawer functions
   // ----------------------------------------------------------------
 
+  /** The element that had focus before the drawer was opened; restored on close. */
+  var lastDrawerTrigger = null;
+
+  /**
+   * Return all keyboard-focusable descendants of container that are not hidden.
+   * @param {HTMLElement} container
+   * @returns {HTMLElement[]}
+   */
+  function getFocusableElements(container) {
+    var selector = [
+      'a[href]',
+      'area[href]',
+      'button:not([disabled])',
+      'input:not([disabled]):not([type="hidden"])',
+      'select:not([disabled])',
+      'textarea:not([disabled])',
+      'iframe',
+      '[tabindex]:not([tabindex="-1"])',
+      '[contenteditable="true"]'
+    ].join(', ');
+    var nodes = container.querySelectorAll(selector);
+    var focusable = [];
+    var i;
+    for (i = 0; i < nodes.length; i += 1) {
+      if (!nodes[i].hidden && nodes[i].getAttribute('aria-hidden') !== 'true') {
+        focusable.push(nodes[i]);
+      }
+    }
+    return focusable;
+  }
+
+  /**
+   * Trap keyboard focus inside the open drawer when Tab is pressed.
+   * @param {KeyboardEvent} e
+   */
+  function trapDrawerFocus(e) {
+    var drawer, focusable, first, last;
+    if (!drawerState.isOpen || e.key !== 'Tab') { return; }
+    drawer = document.getElementById('stats-drawer');
+    if (!drawer) { return; }
+    focusable = getFocusableElements(drawer);
+    if (!focusable.length) {
+      e.preventDefault();
+      return;
+    }
+    first = focusable[0];
+    last = focusable[focusable.length - 1];
+    if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault();
+      first.focus();
+    }
+  }
+
+  /**
+   * Move focus into the drawer, preferring the close button.
+   * @param {HTMLElement} drawer
+   */
+  function focusDrawer(drawer) {
+    var closeBtn = drawer.querySelector('.drawer-close');
+    var focusable;
+    if (closeBtn && typeof closeBtn.focus === 'function') {
+      closeBtn.focus();
+      return;
+    }
+    focusable = getFocusableElements(drawer);
+    if (focusable.length) {
+      focusable[0].focus();
+      return;
+    }
+    drawer.setAttribute('tabindex', '-1');
+    drawer.focus();
+  }
+
+  /**
+   * Open the stats drawer.  No-op until team data has been loaded.
+   */
   function openDrawer() {
     var drawer = document.getElementById('stats-drawer');
     var backdrop = document.getElementById('drawer-backdrop');
+    var trigger = document.getElementById('more-details');
+
+    if (!drawerState.currentTeam) { return; }
+
+    lastDrawerTrigger = document.activeElement;
+
+    backdrop.hidden = false;
+    drawer.hidden = false;
+    drawer.removeAttribute('aria-hidden');
 
     drawer.classList.add('open');
     backdrop.classList.add('open');
     drawerState.isOpen = true;
     document.body.style.overflow = 'hidden';
+
+    trigger.setAttribute('aria-expanded', 'true');
+    focusDrawer(drawer);
   }
 
+  /**
+   * Close the stats drawer and restore focus to the element that opened it.
+   */
   function closeDrawer() {
     var drawer = document.getElementById('stats-drawer');
     var backdrop = document.getElementById('drawer-backdrop');
+    var trigger = document.getElementById('more-details');
 
     drawer.classList.remove('open');
     backdrop.classList.remove('open');
     drawerState.isOpen = false;
     document.body.style.overflow = '';
+
+    drawer.hidden = true;
+    backdrop.hidden = true;
+
+    trigger.setAttribute('aria-expanded', 'false');
+
+    if (lastDrawerTrigger && document.contains(lastDrawerTrigger)) {
+      lastDrawerTrigger.focus();
+    }
   }
 
   /**
@@ -304,9 +408,12 @@
     moreDetailsEl.appendChild(runsColon);
     moreDetailsEl.appendChild(document.createTextNode('\u00a0' + runs));
 
-    // Store current team data and pre-populate the stats drawer.
+    // Store current team data and repopulate the stats drawer only when it is
+    // closed; if the drawer is currently open let the user finish reading.
     drawerState.currentTeam = team;
-    populateStatsTable(team);
+    if (!drawerState.isOpen) {
+      populateStatsTable(team);
+    }
   }
 
   // ----------------------------------------------------------------
@@ -350,6 +457,9 @@
         closeDrawer();
       }
     });
+
+    // Tab key — trap focus inside the open drawer
+    document.addEventListener('keydown', trapDrawerFocus);
   }
 
   // ----------------------------------------------------------------

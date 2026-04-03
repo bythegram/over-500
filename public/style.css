@@ -328,3 +328,13 @@ main {
     font-size: 1rem;
   }
 }
+
+/* ==========================================================================
+   Reduced-motion — disable springy drawer animation
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --drawer-transition: 0s linear;
+  }
+}
