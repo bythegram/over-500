@@ -47,6 +47,15 @@ body {
   font-family: var(--font-primary);
 }
 
+html {
+  /* Match header brand colour so overscroll (rubber-band / elastic scroll) areas
+     show the brand background instead of white/grey.
+     NOTE: CSS custom properties only inherit downward, so --color-brand-bg
+     (declared on body) is not available here.  The literal #134a8e matches the
+     --color-brand-bg fallback value used throughout the rest of the app. */
+  background-color: #134a8e;
+}
+
 body {
   background-color: var(--color-bg);
   color: var(--color-text);

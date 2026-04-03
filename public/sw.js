@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  var CACHE_NAME = 'over-500-v1';
+  var CACHE_NAME = 'over-500-v2';
   var API_CACHE_NAME = 'over-500-api-v1';
 
   // These are relative to the service worker scope so the app works under subpaths.
