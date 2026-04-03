@@ -105,6 +105,23 @@
   // ----------------------------------------------------------------
 
   /**
+   * Update the theme-color <meta> tag to match the current team's primary
+   * brand background colour.  Must be called after the brand CSS has loaded
+   * and the brand class has been added to <body> so that
+   * --mlb-1-brand-background-main resolves correctly.
+   */
+  function updateThemeColor() {
+    var meta = document.querySelector('meta[name="theme-color"]');
+    if (!meta) { return; }
+    var color = window.getComputedStyle(document.body)
+      .getPropertyValue('--mlb-1-brand-background-main')
+      .trim();
+    if (color) {
+      meta.setAttribute('content', color);
+    }
+  }
+
+  /**
    * Load the team brand CSS from brand-colors.mlbstatic.com and activate
    * the brand class on <body> so all CSS variables resolve.
    * CSS file scope: :root .brand--team-{id} { --mlb-1-brand-* }
@@ -117,6 +134,7 @@
       link.rel = 'stylesheet';
       document.head.appendChild(link);
     }
+    link.onload = updateThemeColor;
     link.href = 'https://brand-colors.mlbstatic.com/v1/team-' + teamId + '.css';
     // SRI hashes are not applied here because the brand CSS files are
     // per-team, updated frequently, and selected dynamically at runtime.
